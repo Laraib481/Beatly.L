@@ -5,6 +5,7 @@ import {
   Music2,
   Play,
   Pause,
+  Trash2,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -21,50 +22,112 @@ function ArtistDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentMusic, setCurrentMusic] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   // Get logged-in artist
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Fetch all songs
+  // ================= FETCH MY SONGS =================
+
   useEffect(() => {
-    const fetchMusics = async () => {
+    const fetchMyMusics = async () => {
       try {
         setLoading(true);
         setError("");
 
-        const response = await fetch(`${API}/api/music`);
+        const token = localStorage.getItem("token");
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch music");
+        if (!token) {
+          setError("You are not logged in.");
+          return;
         }
+
+        const response = await fetch(`${API}/api/music/my-songs`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         const data = await response.json();
 
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch your songs");
+        }
+
         setMusics(data.musics || []);
       } catch (error) {
-        console.log(error);
-        setError("Unable to load your songs");
+        console.log("Fetch my songs error:", error);
+        setError(error.message || "Unable to load your songs");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMusics();
+    fetchMyMusics();
   }, [API]);
 
-  // Only current artist's songs
-  const myMusics = musics.filter((music) => {
-    return music.artist?._id === user?._id;
-  });
+  // ================= SEARCH =================
 
-  // Search current artist's songs
-  const filteredMusics = myMusics.filter((music) => {
+  const filteredMusics = musics.filter((music) => {
     const searchText = search.toLowerCase().trim();
 
     const title = music.title?.toLowerCase() || "";
 
     return title.includes(searchText);
   });
+
+  // ================= DELETE MUSIC =================
+
+  const handleDelete = async (musicId, musicTitle) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete "${musicTitle}"?`
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      setDeletingId(musicId);
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("You are not logged in.");
+        return;
+      }
+
+      const response = await fetch(`${API}/api/music/${musicId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to delete music");
+        return;
+      }
+
+      // Remove deleted music from UI
+      setMusics((previousMusics) =>
+        previousMusics.filter((music) => music._id !== musicId)
+      );
+
+      // Stop player if deleted music was playing
+      if (currentMusic === musicId) {
+        setCurrentMusic(null);
+      }
+
+      alert(data.message || "Music deleted successfully");
+    } catch (error) {
+      console.log("Delete music error:", error);
+      alert("Something went wrong while deleting music");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">
@@ -80,7 +143,6 @@ function ArtistDashboard() {
           <h1 className="text-2xl sm:text-3xl font-bold text-[#D4A574] tracking-wide shrink-0">
             Beatly
           </h1>
-
 
           {/* Desktop / Tablet Right Side */}
 
@@ -116,7 +178,6 @@ function ArtistDashboard() {
 
           </div>
 
-
           {/* Mobile Profile */}
 
           <div className="sm:hidden w-10 h-10 rounded-full bg-[#D4A574] text-black flex items-center justify-center font-bold shrink-0">
@@ -124,7 +185,6 @@ function ArtistDashboard() {
           </div>
 
         </div>
-
 
         {/* Mobile Search */}
 
@@ -146,7 +206,6 @@ function ArtistDashboard() {
         </div>
 
       </nav>
-
 
       {/* ================= HERO ================= */}
 
@@ -184,7 +243,6 @@ function ArtistDashboard() {
 
           </p>
 
-
           {/* Buttons */}
 
           <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 lg:gap-5 mt-9 sm:mt-12">
@@ -201,7 +259,6 @@ function ArtistDashboard() {
               Upload Music
 
             </button>
-
 
             {/* My Songs */}
 
@@ -220,7 +277,6 @@ function ArtistDashboard() {
 
             </button>
 
-
             {/* Explore Other */}
 
             <button
@@ -238,7 +294,6 @@ function ArtistDashboard() {
 
         </div>
 
-
         {/* RIGHT */}
 
         <div className="relative flex justify-center mt-12 lg:mt-0">
@@ -254,7 +309,6 @@ function ArtistDashboard() {
         </div>
 
       </section>
-
 
       {/* ================= STATS ================= */}
 
@@ -273,7 +327,7 @@ function ArtistDashboard() {
                 </p>
 
                 <h2 className="text-4xl sm:text-5xl font-bold mt-3 text-[#D4A574]">
-                  {myMusics.length}
+                  {musics.length}
                 </h2>
 
               </div>
@@ -298,7 +352,6 @@ function ArtistDashboard() {
         </div>
 
       </section>
-
 
       {/* ================= CONTINUE CREATING ================= */}
 
@@ -333,7 +386,6 @@ function ArtistDashboard() {
 
       </section>
 
-
       {/* ================= YOUR SONGS ================= */}
 
       <section
@@ -357,7 +409,6 @@ function ArtistDashboard() {
 
         </div>
 
-
         {/* Loading */}
 
         {loading && (
@@ -366,7 +417,6 @@ function ArtistDashboard() {
           </div>
         )}
 
-
         {/* Error */}
 
         {!loading && error && (
@@ -374,7 +424,6 @@ function ArtistDashboard() {
             {error}
           </div>
         )}
-
 
         {/* No Songs */}
 
@@ -401,7 +450,6 @@ function ArtistDashboard() {
 
         )}
 
-
         {/* REAL SONGS */}
 
         {!loading && !error && filteredMusics.length > 0 && (
@@ -424,7 +472,6 @@ function ArtistDashboard() {
                     alt={music.title}
                     className="w-full h-full object-cover"
                   />
-
 
                   {/* Play */}
 
@@ -449,7 +496,6 @@ function ArtistDashboard() {
 
                 </div>
 
-
                 {/* Details */}
 
                 <div className="p-5 sm:p-6">
@@ -459,9 +505,12 @@ function ArtistDashboard() {
                   </h3>
 
                   <p className="text-gray-400 mt-2 text-sm sm:text-base">
-                    Published
+                    {music.artist?.username || user?.username || "Artist"}
                   </p>
 
+                  <p className="text-gray-600 text-xs mt-2">
+                    Published on Beatly
+                  </p>
 
                   {/* Audio */}
 
@@ -473,6 +522,57 @@ function ArtistDashboard() {
                       className="w-full mt-4"
                     />
                   )}
+
+                  {/* Actions */}
+
+                  <div className="flex items-center gap-3 mt-5">
+
+                    <button
+                      onClick={() => {
+                        if (currentMusic === music._id) {
+                          setCurrentMusic(null);
+                        } else {
+                          setCurrentMusic(music._id);
+                        }
+                      }}
+                      className="flex-1 border border-[#333] py-3 rounded-xl hover:border-[#D4A574] hover:text-[#D4A574] duration-300 flex items-center justify-center gap-2"
+                    >
+
+                      {currentMusic === music._id ? (
+                        <>
+                          <Pause size={17} />
+                          Pause
+                        </>
+                      ) : (
+                        <>
+                          <Play size={17} />
+                          Play
+                        </>
+                      )}
+
+                    </button>
+
+                    {/* DELETE */}
+
+                    <button
+                      onClick={() =>
+                        handleDelete(music._id, music.title)
+                      }
+                      disabled={deletingId === music._id}
+                      className="w-12 h-12 rounded-xl border border-red-900/40 text-red-400 hover:bg-red-500 hover:text-white duration-300 flex items-center justify-center disabled:opacity-50"
+                    >
+
+                      {deletingId === music._id ? (
+                        <span className="text-xs">
+                          ...
+                        </span>
+                      ) : (
+                        <Trash2 size={18} />
+                      )}
+
+                    </button>
+
+                  </div>
 
                 </div>
 
@@ -491,3 +591,4 @@ function ArtistDashboard() {
 }
 
 export default ArtistDashboard;
+

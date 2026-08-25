@@ -9,6 +9,7 @@ const router = express.Router();
 const upload = multer({
     storage: multer.memoryStorage()
 })
+
 router.post("/upload", authMiddleware.authArtist, upload.fields([
     {
         name: "music",
@@ -22,7 +23,21 @@ router.post("/upload", authMiddleware.authArtist, upload.fields([
 
 router.post("/album", authMiddleware.authArtist, musicController.createAlbum);
 
+router.get(
+  "/my-songs",
+  authMiddleware.authArtist,
+  musicController.getMyMusics
+);
+
+router.delete(
+  "/:id",
+  authMiddleware.authArtist,
+  musicController.deleteMusic
+);
+
+
 router.get("/", musicController.getAllMusics)
+
 
 
 module.exports = router;

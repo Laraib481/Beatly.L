@@ -4,34 +4,6 @@ const albumModel = require("../models/album.model");
 const { uploadFile } = require("../services/storage.services");
 const jwt = require('jsonwebtoken');
 
-// async function createMusic(req, res) {
-
-
-
-//     const { title } = req.body;
-//     const file = req.file;
-
-//     const result = await uploadFile(file.buffer.toString('base64'))
-
-//     const music = await musicModel.create({
-//       uri: result.url,
-//       title,
-//       artist: req.user.id,
-//     })
-
-//     res.status(201).json({
-//       messege: " music created succesfully",
-//       music: {
-//         id: music._id,
-//         uri: music.uri,
-//         title: music.title,
-//         artist: music.artist,
-
-//       }
-//     })
-
-
-// }
 
 async function createMusic(req, res) {
   try {
@@ -105,4 +77,52 @@ async function getAllMusics(req, res) {
 
 }
 
-module.exports = { createMusic, createAlbum, getAllMusics };
+async function getMyMusics(req, res) {
+  try {
+    const musics = await musicModel
+      .find({ artist: req.user.id })
+      .populate("artist", "username email");
+
+    res.status(200).json({
+      message: "Artist musics fetched successfully",
+      musics,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+}
+
+async function deleteMusic(req, res) {
+  try {
+    const { id } = req.params;
+
+    const music = await musicModel.findOne({
+      _id: id,
+      artist: req.user.id,
+    });
+
+    if (!music) {
+      return res.status(404).json({
+        message: "Music not found or you are not allowed to delete it",
+      });
+    }
+
+    await musicModel.findByIdAndDelete(id);
+
+    res.status(200).json({
+      message: "Music deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+}
+
+module.exports = { createMusic, createAlbum, getAllMusics, getMyMusics, deleteMusic,};
