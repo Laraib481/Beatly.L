@@ -111,8 +111,11 @@ The project was built from scratch with a focus on **modern UI, authentication, 
 The Beatly home page introduces the platform and displays the latest/trending music available for listeners.
 
 ![Beatly Home Page](screenshots/home1.png)
+
 ![Beatly Home Page](screenshots/home2.png)
+
 ![Beatly Home Page](screenshots/home3.png)
+
 ![Beatly Home Page](screenshots/home4.png)
 
 ---
