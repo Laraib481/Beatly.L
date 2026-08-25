@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import TrendingList from "../components/TrendingList";
 
+
 function Home() {
   const API = import.meta.env.VITE_API_URL;
 
@@ -252,25 +253,75 @@ function Home() {
 
       {/* ================= FOOTER ================= */}
 
-      <footer className="border-t border-white/5 px-5 sm:px-8 lg:px-12 py-8">
+<footer className="border-t border-white/10 px-5 sm:px-8 lg:px-12 py-10">
 
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+  <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
 
-          <span className="text-xl font-bold text-[#D4A574]">
-            Beatly
-          </span>
+    {/* Beatly */}
+    <div className="text-center sm:text-left">
 
-          <span className="text-gray-600 text-sm">
-            Music. Artists. Moments.
-          </span>
+      <p className="text-xl font-bold text-[#D4A574]">
+        Beatly
+      </p>
 
-          <span className="text-gray-700 text-sm">
-            © 2026
-          </span>
+      <p className="text-gray-400 text-sm mt-1">
+        Music. Artists. Moments.
+      </p>
 
-        </div>
+    </div>
 
-      </footer>
+
+    {/* Developer Credit */}
+    <div className="text-center">
+
+      <p className="text-gray-300 text-sm">
+        Developed by{" "}
+        <span className="text-[#D4A574] font-semibold">
+          Laraib
+        </span>
+      </p>
+
+      <div className="flex items-center justify-center gap-5 mt-3">
+
+        <a
+          href="https://www.linkedin.com/in/laraib-sarwar-a248a2379/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-400 hover:text-[#D4A574] text-sm transition duration-300"
+        >
+          LinkedIn
+        </a>
+
+        <a
+          href="https://github.com/Laraib481"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-400 hover:text-[#D4A574] text-sm transition duration-300"
+        >
+          GitHub
+        </a>
+
+        <a
+          href="mailto:laraib15869@gmail.com"
+          className="text-gray-400 hover:text-[#D4A574] text-sm transition duration-300"
+        >
+          Email
+        </a>
+
+      </div>
+
+    </div>
+
+
+    {/* Copyright */}
+    <span className="text-gray-400 text-sm">
+      © 2026
+    </span>
+
+  </div>
+
+</footer>
+      
 
     </div>
   );
