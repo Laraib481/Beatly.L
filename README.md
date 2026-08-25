@@ -140,7 +140,9 @@ New users and artists can create their Beatly accounts.
 
 The artist dashboard allows artists to manage their music and view their uploaded songs.
 
-![Artist Dashboard](screenshots/artist-dashboard.png)
+![Artist Dashboard](screenshots/artist-dashboard1.png)
+
+![Artist Dashboard](screenshots/artist-dashboard2.png)
 
 ---
 
@@ -164,7 +166,10 @@ Artists can view, search, play, and manage their uploaded music.
 
 Listeners can access their dashboard and discover music available on Beatly.
 
-![User Dashboard](screenshots/user-dashboard.png)
+![User Dashboard](screenshots/user-dashboard1.png)
+
+![User Dashboard](screenshots/user-dashboard2.png)
+
 
 ---
 
