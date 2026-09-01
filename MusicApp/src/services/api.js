@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:3000/api", // apna backend port lagana
+  baseURL: "https://beatly-l.vercel.app/api",
   withCredentials: true,
 });
 
