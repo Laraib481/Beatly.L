@@ -1,20 +1,20 @@
-// const app = require('../src/app');
-// const connectDb = require('../src/db/db');
-
-// connectDb();
-
-// module.exports = app;
-
-
-
-// const app = require('../src/app');
-// const connectDb = require('../src/db/db');
-
-// module.exports = async (req, res) => {
-//   await connectDb();
-//   return app(req, res);
-// };
-
 const app = require('../src/app');
+const connectDb = require('../src/db/db');
 
-module.exports = app;
+let dbConnected = false;
+
+module.exports = async (req, res) => {
+  try {
+    if (!dbConnected) {
+      await connectDb();
+      dbConnected = true;
+    }
+
+    return app(req, res);
+  } catch (error) {
+    console.error('Database connection error:', error);
+    return res.status(500).json({
+      message: 'Database connection failed'
+    });
+  }
+};
