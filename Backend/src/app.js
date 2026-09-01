@@ -12,7 +12,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://beatly-l-6jfx.vercel.app",
     credentials: true,
   })
 );
