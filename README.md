@@ -3,6 +3,11 @@
 > A modern full-stack music streaming platform where artists can upload and manage their music while listeners can discover and enjoy songs through a clean, responsive interface.
 
 ---
+## Live Demo
+
+https://beatly-l-6jfx.vercel.app/
+
+---
 
 ## 🌐 Overview
 
